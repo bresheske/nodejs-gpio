@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="App">
+	<head>
+		<script src="./jquery/dist/jquery.min.js"></script>
+		<script src="./bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="./angular/angular.min.js"></script>
+		<script src="./app.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="./site.css" />
+		<link rel="stylesheet" type="text/css" href="./bootstrap/dist/css/bootstrap.css" />
+		
+		<title>GPIO Control Board</title>
+	</head>
+
+	<body>
+		<div class="container" ng-controller="AppController">
+			<div ng-repeat="group in gpioData">
+				<h3>{{group.groupName}}</h3>
+				<div class="row">
+					<div ng-repeat="gpio in group.data">
+						<div class="col-sm-3 optionbox">
+							<strong>{{gpio.name}}</strong>
+							<strong class="glyphicon glyphicon-off {{gpio.status}}" ng-click="toggleGPIO(gpio)"></strong>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
