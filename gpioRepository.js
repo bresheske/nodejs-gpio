@@ -54,34 +54,27 @@ var gpiodata = [
 ];
 
 // Local methods.
-var checkStatus = function(id, callback){
-	
+var checkStatus = function(id){
 	var file = "/sys/class/gpio/gpio" + id + "/value";
-	fs.readFile(file, 'utf8', function(err, data) {
-		// replacing all whitespace chars.  Seems to come back with a newline char.
-		data = data.replace(/^\s+|\s+$/g, '');
-		console.log("GPIO" + id + ":" + data);
-		var val = data == "0"
-			? true
-			: false;
-		callback(val);
-	});
+	var data = fs.readFileSync(file, 'utf8');
+	data = data.replace(/^\s+|\s+$/g, '');
+	var val = data == "0"
+		? true
+		: false;
+	return val;
 };
 
 var writeStatus = function(id, value){
 	var val = value == true
 		? 0 
 		: 1;
-	console.log("Writing: ID: " + id + ", " + val);
 	fs.writeFileSync('/sys/class/gpio/gpio' + id + '/value', val);
 };
 
 var toggleStatus = function(id){
-	checkStatus(id, function(value){
-		var val = !value;
-		console.log("Toggling " + id + ". Current: " + value + ", New: " + val);
-		writeStatus(id, val);
-	});
+	var value = checkStatus(id);
+	var val = !value;
+	writeStatus(id, val);
 };
 
 var openAll = function() {
@@ -115,23 +108,16 @@ repo.prototype.openAll = function(){
 	openAll();
 };
 
-repo.prototype.getAll = function(callback){
+repo.prototype.getAll = function(){
 	var data = gpiodata;
-	
-	var count = 0;
-	var total = 8;
-	data.forEach(function(group){
+		data.forEach(function(group){
 		group.data.forEach(function(gpiostatus){
 			// Get the status, set the result.
-			checkStatus(gpiostatus.id, function(val){
-				gpiostatus.status = val ? "on" : "off";
-				
-				count++;
-				if (count === total)
-					callback(data);
-			});
+			var val = checkStatus(gpiostatus.id);
+			gpiostatus.status = val ? "on" : "off";
 		});
 	});
+	return data;
 };
 
 module.exports = new repo();

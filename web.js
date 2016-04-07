@@ -21,9 +21,8 @@ app.get('/', function(req, res) {
 
 // API for getting the GPIO.
 app.get('/GetGPIO', function(req, res){
-	var data = repo.getAll(function(data){
-		res.json(data);
-	});
+	var data = repo.getAll();
+	res.json(data);
 });
 
 // API for toggling a GPIO.
@@ -32,9 +31,8 @@ app.post('/ToggleGPIO', function(req, res){
 	repo.toggleStatus(req.body.id);
 	
 	// return the full results.
-	var data = repo.getAll(function(data){
-		res.json(data);
-	});
+	var data = repo.getAll();
+	res.json(data);
 });
 
 // Spin the server up. Control-C to cancel.
